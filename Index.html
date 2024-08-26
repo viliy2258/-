@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Store Password</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-5CPzp5iwNHUxloFkDBf3J8gRlUpbGVc",
+      authDomain: "ton-not.firebaseapp.com",
+      databaseURL: "https://ton-not-default-rtdb.firebaseio.com",
+      projectId: "ton-not",
+      storageBucket: "ton-not.appspot.com",
+      messagingSenderId: "729333286761",
+      appId: "1:729333286761:web:741fdeb1572cc1908bdff8",
+      measurementId: "G-JKCWNWTLBT"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    // Function to save the password in the database
+    async function savePassword(password) {
+      try {
+        await set(ref(database, 'password'), password);
+        console.log('Password saved successfully.');
+      } catch (error) {
+        console.error('Error saving password:', error);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const passwordInput = document.getElementById('passwordInput');
+      const saveButton = document.getElementById('saveButton');
+
+      saveButton.addEventListener('click', async () => {
+        const password = passwordInput.value.trim();
+        if (password.length === 2 && /^\d{2}$/.test(password)) {
+          await savePassword(password);
+          alert('Password saved successfully.');
+        } else {
+          alert('Please enter a valid two-digit password.');
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  <h1>Store Two-Digit Password</h1>
+  <input type="text" id="passwordInput" placeholder="Enter a two-digit password" maxlength="2" />
+  <button id="saveButton">Save Password</button>
+</body>
+</html>
