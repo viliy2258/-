@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guess Two-Digit Password</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-5CPzp5iwNHUxloFkDBf3J8gRlUpbGVc",
+      authDomain: "ton-not.firebaseapp.com",
+      databaseURL: "https://ton-not-default-rtdb.firebaseio.com",
+      projectId: "ton-not",
+      storageBucket: "ton-not.appspot.com",
+      messagingSenderId: "729333286761",
+      appId: "1:729333286761:web:741fdeb1572cc1908bdff8",
+      measurementId: "G-JKCWNWTLBT"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    // Function to guess the two-digit password and display the process in real-time
+    async function guessPassword() {
+      const resultDiv = document.getElementById('result');
+      for (let i = 0; i < 100; i++) {
+        const guess = i.toString().padStart(2, '0');
+        resultDiv.textContent = `Trying password: ${guess}`;
+        const passwordRef = ref(database, 'password');
+        const snapshot = await get(passwordRef);
+
+        if (snapshot.exists() && snapshot.val() === guess) {
+          resultDiv.textContent = `Password guessed successfully: ${guess}`;
+          return guess;
+        }
+        await new Promise(resolve => setTimeout(resolve, 100)); // Short delay to visualize guessing
+      }
+      resultDiv.textContent = 'Password not found.';
+      return null;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const guessButton = document.getElementById('guessButton');
+      guessButton.addEventListener('click', async () => {
+        await guessPassword();
+      });
+    });
+  </script>
+</head>
+<body>
+  <h1>Guess Two-Digit Password</h1>
+  <button id="guessButton">Start Guessing</button>
+  <div id="result"></div>
+</body>
+</html>
